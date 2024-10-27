@@ -136,9 +136,6 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 
 **MoonNet** is a high-performance server-side network library focused on a Reactor model，providing server modules based on the master-slave Reactor multi-threaded model. Leveraging Linux's `epoll` mechanism combined with multithreading and event-driven design, MoonNet provides efficient and scalable network communication capabilities. It supports both TCP and UDP protocols, with built-in signal handling and timer functionalities, making it suitable for building high-concurrency, low-latency server applications.
 
-​	
-
-​	
 
 
 
@@ -148,17 +145,13 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 - **Multithreading**: Master-worker Reactor pattern with a thread pool managing multiple event loops, fully utilizing multi-core CPUs.
 - **Rich Event Types**: Supports TCP, UDP, timer, and signal events.
 - **Ease of Use**: Simple interface design, easy to integrate into various projects.
-- **Static/Dynamic Load Balancing **: Provides static and dynamic load balancing solutions
-
-​	
+- **Static/Dynamic Load Balancing**: Provides static and dynamic load balancing solutions
 
 ​	
 
 
 
 ### Installation
-
-​	
 
 
 
@@ -216,11 +209,6 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 
    
 
-
-​	
-
-​	
-
 ​	
 
 ### Comparison
@@ -234,8 +222,6 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 | **Cross-Platform**         | Linux                            | Linux                   | Linux, Windows       | Cross-platform                    | Cross-platform          |
 
 MoonNet offers performance comparable to traditional high-performance network libraries while reducing complexity through its straightforward interface design and built-in multithreading management, making it ideal for server applications requiring high concurrency.
-
-​	
 
 ​	
 
