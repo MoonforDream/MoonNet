@@ -1,3 +1,8 @@
+// Modified from muduo project http://github.com/chenshuo/muduo
+// @see https://github.com/chenshuo/muduo/blob/master/muduo/net/EventLoopThread.h
+// and https://github.com/chenshuo/muduo/blob/master/muduo/net/EventLoopThread.cc
+
+
 #ifndef _LOOPTHREAD_H_
 #define _LOOPTHREAD_H_
 
