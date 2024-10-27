@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/moonnetTargets.cmake")
+
+# 创建一个别名目标，允许用户无需命名空间前缀即可链接
+if(TARGET moonnet::moonnet)
+    add_library(moonnet ALIAS moonnet::moonnet)
+endif()
+
+set(moonnet_VERSION "@PACKAGE_VERSION@")
