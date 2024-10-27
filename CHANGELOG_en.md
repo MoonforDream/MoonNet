@@ -18,6 +18,7 @@
   - UDP support via `udpevent` for data reception and transmission.
   - Timer event handling implemented through `timerevent` for scheduled tasks.
   - Signal event handling using `signalevent` to capture and process system signals.
+  - Static/dynamic load balancing
 - **Utility Classes**:
   - Buffer management (`buffer`) for efficient data read/write operations.
   - Platform-independent socket operations encapsulation (`wrap`).
