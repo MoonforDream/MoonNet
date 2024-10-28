@@ -270,7 +270,7 @@ MoonNet offers performance comparable to traditional high-performance network li
 以下我会将主要功能用一个服务器示例展现 / I will demonstrate the main functions using an example server as follows：
 
 ```cpp
-#include "MoonNet.h"
+#include <moonnet/moonnet.h>
 #include <signal.h>
 #include <iostream>
 
