@@ -236,7 +236,7 @@ MoonNet offers performance comparable to traditional high-performance network li
 - **服务器/Server**：阿里云 2 核 2G Ubuntu 服务器 /  Aliyun 2-core 2G Ubuntu server
 - **测试工具/Testing Tool**：使用 muduo 的 pingpong 客户端 / Using muduo's pingpong client
 - **测试方法/Methodology**：在 1000 个并发连接下，运行 10 分钟，分别测试不同消息大小的吞吐量 / Under 1000 concurrent connections, run for 10 minutes, testing throughput with different message sizes
-- **测试目标/Test Target**：4线程的TCP回声服务器，代码见bench目录 / A 4-threaded TCP echo server, code can be found in the bench directory
+- **测试目标/Test Target**：4线程的TCP回声服务器，动态均衡是以2-4线程进行动态调整的，代码见bench目录 / A 4-threaded TCP echo server, code can be found in the bench directory
 
 
 
@@ -246,18 +246,18 @@ MoonNet offers performance comparable to traditional high-performance network li
 
 #### 吞吐量比较/Throughput
 
-| 并发数/Concurrency | 测试时长/Duration | 消息大小/Message Size | MoonNet 吞吐量/Throughput | muduo 吞吐量/Throughput | Libevent 吞吐量/Throughput |
-| ------------------ | ----------------- | --------------------- | ------------------------- | ----------------------- | -------------------------- |
-| 1000               | 10 分钟           | 1024 字节             | 102.06 MiB/s              | 97.51 MiB/s             | 95.22 MiB/s                |
-| 1000               | 10 分钟           | 4096 字节             | 373.76 MiB/s              | 355.86 MiB/s            | 281.47 MiB/s               |
-| 1000               | 10 分钟           | 8192 字节             | 669.08 MiB/s              | 632.54 MiB/s            | 561.58 MiB/s               |
+| 并发数/Concurrency | 测试时长/Duration | 消息大小/Message Size | MoonNet(Dynamic) 吞吐量/Throughput | MoonNet(Static) 吞吐量/Throughput | muduo 吞吐量/Throughput | Libevent 吞吐量/Throughput |
+| ------------------ | ----------------- | --------------------- | ---------------------------------- | --------------------------------- | ----------------------- | -------------------------- |
+| 1000               | 10 分钟           | 1024 字节             | 119.28mib/s                        | 102.06 MiB/s                      | 97.51 MiB/s             | 95.22 MiB/s                |
+| 1000               | 10 分钟           | 4096 字节             | 477.82mib/s                        | 373.76 MiB/s                      | 355.86 MiB/s            | 281.47 MiB/s               |
+| 1000               | 10 分钟           | 8192 字节             | 914.60mib/s                        | 669.08 MiB/s                      | 632.54 MiB/s            | 561.58 MiB/s               |
 
 
 
 ### 数据可视化/Data Visualization
 
 为了更直观地展示不同库的吞吐量差异，以下是测试结果的柱状图 / To better illustrate the throughput differences among different libraries, here is a bar chart of the test results：
-![Throughtput img](bench/throughput_comparison.png)
+![Throughtput img](bench/throughput_comparison_updated.png)
 
 
 

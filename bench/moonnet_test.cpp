@@ -1,4 +1,4 @@
-#include "MoonNet.h"
+#include <moonnet/moonnet.h>
 #include <iostream>
 
 using namespace moon;
