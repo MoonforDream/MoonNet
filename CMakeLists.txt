@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(MOONNET_VERSION "1.0.0")
+set(MOONNET_VERSION "1.0.1")
 project(moonnet VERSION ${MOONNET_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
