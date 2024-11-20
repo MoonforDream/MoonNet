@@ -1,3 +1,37 @@
+/* BSD 3-Clause License
+
+Copyright (c) 2024, MoonforDream
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+Author: MoonforDream
+
+*/
+
+
 #include "server.h"
 #include "event.h"
 #include "udpevent.h"
@@ -95,6 +129,109 @@ void server::set_tcpcb(const RCallback &rcb,const Callback &wcb,const Callback &
 }
 
 
+void server::addev(base_event *ev){
+    if(auto uev=dynamic_cast<udpevent*>(ev)){
+        udpevent::Callback cb=uev->getecb();
+        uev->setecb([&](){
+            if(cb) cb();
+            handle_close(uev);
+        });
+    }
+    ev->enable_listen();
+    events_.emplace_back(ev);
+}
+
+void server::modev(base_event* ev){
+    ev->update_ep();
+}
+
+void server::delev(base_event *ev){
+    ev->del_listen();
+    handle_close(ev);
+}
+
+
+
+
+udpevent* server::add_udpev(int port,const UCallback &rcb,const Callback &ecb){
+    udpevent *uev=new udpevent(pool_.ev_dispatch(),port);
+    uev->setcb(rcb,[&](){
+        if(ecb) ecb();
+        handle_close(uev);
+    });
+    uev->enable_listen();
+    events_.emplace_back(uev);
+    return uev;
+}
+
+
+
+
+signalevent* server::add_sev(int signo, const moon::server::SCallback &cb) {
+    signalevent* sigev=new signalevent(&base_);
+    sigev->add_signal(signo);
+    sigev->setcb(cb);
+    sigev->enable_listen();
+    events_.emplace_back(sigev);
+    return sigev;
+}
+
+
+
+signalevent* server::add_sev(const std::vector<int>& signals, const moon::server::SCallback &cb) {
+    signalevent* sigev=new signalevent(&base_);
+    sigev->add_signal(signals);
+    sigev->setcb(cb);
+    sigev->enable_listen();
+    events_.emplace_back(sigev);
+    return sigev;
+}
+
+
+
+timerevent* server::add_timeev(int timeout_ms, bool periodic, const Callback &cb) {
+    timerevent* tev=new timerevent(dispatch(),timeout_ms,periodic);
+    tev->setcb(cb);
+    tev->enable_listen();
+    events_.emplace_back(tev);
+    return tev;
+}
+
+
+/* void server::del_udpev(udpevent *uev){
+    uev->del_listen();
+    handle_close(uev);
+}
+
+
+void server::mod_udpev(udpevent *uev){
+    uev->update_ep();
+}
+
+
+
+void server::add_sev(signalevent *sev) {
+    sev->enable_listen();
+    events_.emplace_back(sev);
+}
+
+void server::del_sev(moon::signalevent *sev) {
+    sev->del_listen();
+    handle_close(sev);
+}
+
+
+void server::add_timeev(timerevent *tev) {
+    tev->enable_listen();
+    events_.emplace_back(tev);
+}
+
+
+void server::del_timeev(timerevent *tev) {
+    tev->del_listen();
+    handle_close(tev);
+}
+
 
 void server::add_ev(event *ev){
     ev->enable_listen();
@@ -137,86 +274,7 @@ void server::add_udpev(udpevent *uev){
         if(cb) cb();
         handle_close(uev);
     });
-    uev->start();
+    uev->enable_listen();
     events_.emplace_back(uev);
 }
-
-
-
-udpevent* server::add_udpev(int port,const UCallback &rcb,const Callback &ecb){
-    udpevent *uev=new udpevent(pool_.ev_dispatch(),port);
-    uev->setcb(rcb,[&](){
-        if(ecb) ecb();
-        handle_close(uev);
-    });
-    uev->start();
-    events_.emplace_back(uev);
-    return uev;
-}
-
-
-void server::del_udpev(udpevent *uev){
-    uev->stop();
-    handle_close(uev);
-}
-
-
-void server::mod_udpev(udpevent *uev){
-    uev->update_ep();
-}
-
-
-
-void server::add_sev(signalevent *sev) {
-    sev->enable_listen();
-    events_.emplace_back(sev);
-}
-
-
-signalevent* server::add_sev(int signo, const moon::server::SCallback &cb) {
-    signalevent* sigev=new signalevent(&base_);
-    sigev->add_signal(signo);
-    sigev->setcb(cb);
-    sigev->enable_listen();
-    events_.emplace_back(sigev);
-    return sigev;
-}
-
-
-
-signalevent* server::add_sev(const std::vector<int>& signals, const moon::server::SCallback &cb) {
-    signalevent* sigev=new signalevent(&base_);
-    sigev->add_signal(signals);
-    sigev->setcb(cb);
-    sigev->enable_listen();
-    events_.emplace_back(sigev);
-    return sigev;
-}
-
-
-void server::del_sev(moon::signalevent *sev) {
-    sev->del_listen();
-    handle_close(sev);
-}
-
-
-
-timerevent* server::add_timeev(int timeout_ms, bool periodic, const Callback &cb) {
-    timerevent* tev=new timerevent(dispatch(),timeout_ms,periodic);
-    tev->setcb(cb);
-    tev->start();
-    events_.emplace_back(tev);
-    return tev;
-}
-
-
-void server::add_timeev(timerevent *tev) {
-    tev->start();
-    events_.emplace_back(tev);
-}
-
-
-void server::del_timeev(timerevent *tev) {
-    tev->stop();
-    handle_close(tev);
-}
+ */

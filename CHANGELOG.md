@@ -6,6 +6,14 @@
 
 ## 更新日志 (Changelog)
 
+### v1.0.1
+
+- 更新base_event的api，统一多种事件类型的操作
+- 重构`server`的事件操作方式，统一多种事件类型操作，**弃用非特殊事件类型操作api(如add_bev(bfevent* bev))，改用addev(base_event* ev)这种通用api**
+- 更新copyright
+
+​	
+
 ### v1.0.0
 
 - **初始发布**：MoonNet 网络库首次发布，支持基于 Reactor 模型的 TCP 和 UDP 事件处理,封装主从Reactor多线程服务端模块。

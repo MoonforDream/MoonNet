@@ -1,3 +1,37 @@
+/* BSD 3-Clause License
+
+Copyright (c) 2024, MoonforDream
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+Author: MoonforDream
+
+*/
+
+
 #ifndef _SERVER_H_
 #define _SERVER_H_
 
@@ -39,27 +73,30 @@ public:
     
     //设置tcp连接的回调函数
     void set_tcpcb(const RCallback &rcb,const Callback &wcb,const Callback &ecb);
-
     //对事件操作
-    void add_ev(event *ev);
+    void addev(base_event *ev);
+    void delev(base_event *ev);
+    void modev(base_event *ev);
+    //udpevent推荐使用以下这个函数添加，出错会自动清理
+    udpevent* add_udpev(int port,const UCallback &rcb,const Callback &ecb);
+    signalevent* add_sev(int signo,const SCallback& cb);
+    signalevent* add_sev(const std::vector<int>& signals,const SCallback& cb);
+    timerevent* add_timeev(int timeout_ms,bool periodic,const Callback &cb);
+    
+    /** v1.0.0 **/
+    /* void add_ev(event *ev);
     void del_ev(event *ev);
     void mod_ev(event *ev);
     void add_bev(bfevent *bev);
     void del_bev(bfevent *bev);
     void mod_bev(bfevent *bev);
     void add_udpev(udpevent *uev);
-    //udpevent推荐使用以下这个函数添加，出错会自动清理
-    udpevent* add_udpev(int port,const UCallback &rcb,const Callback &ecb);
     void del_udpev(udpevent *uev);
     void mod_udpev(udpevent *uev);
     void add_sev(signalevent* sev);
-    signalevent* add_sev(int signo,const SCallback& cb);
-    signalevent* add_sev(const std::vector<int>& signals,const SCallback& cb);
     void del_sev(signalevent* sev);
     void add_timeev(timerevent *tev);
-    timerevent* add_timeev(int timeout_ms,bool periodic,const Callback &cb);
-    void del_timeev(timerevent *tev);
-
+    void del_timeev(timerevent *tev); */
 private:
     void acceptcb_(int fd){
         bfevent *bev=new bfevent(pool_.ev_dispatch(),fd,EPOLLIN|EPOLLET);

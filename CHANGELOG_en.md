@@ -8,6 +8,15 @@
 
 ## Changelog
 
+### v1.0.1
+
+- Updated the `base_event` API to unify operations across various event types.
+- Refactored the `server` event handling approach to standardize operations for different event types. **Deprecated non-specialized event handling APIs (e.g., `add_bev(bfevent* bev)`) and adopted a general API such as `addev(base_event* ev)`**.
+
+- Updated copyright.
+
+​	
+
 ### v1.0.0
 
 - **Initial Release**: MoonNet network library first released, supporting TCP and UDP event handling based on a master-worker Reactor multithreaded model.

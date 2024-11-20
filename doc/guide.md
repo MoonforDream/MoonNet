@@ -51,6 +51,8 @@ MoonNet 的核心模块包括：
 - **连接器 (`acceptor`)**：监听 TCP 端口并接受新连接。
 - **服务器 (`server`)**：封装了 TCP 和 UDP 服务器功能，管理连接、事件和线程池。
 
+> **注意**：标记类似为`/** v1.0.0 **/`的注释部分包含已弃用或以前版本的事件处理函数。这些已被通用的函数所取代，为事件管理提供了一种统一的方法。
+
 ---
 
 ## 类与接口 (Classes and Interfaces)
@@ -67,13 +69,16 @@ MoonNet 的核心模块包括：
 namespace moon {
 
 class eventloop;
-
 class base_event {
 public:
     virtual ~base_event(){}
-    virtual eventloop* getloop() const = 0;
-    virtual void close() = 0;
-    virtual void disable_cb() = 0;
+    virtual eventloop* getloop() const=0;
+    virtual void close()=0;
+    virtual void disable_cb()=0;
+    /** v1.0.1 **/
+    virtual void enable_listen()=0;
+    virtual void del_listen()=0;
+    virtual void update_ep()=0;
 };
 
 }
@@ -89,6 +94,18 @@ public:
 
 - `virtual void disable_cb() = 0;`  
   禁用事件的回调函数，防止事件被再次触发。
+  
+- `virtual void enable_listen() = 0;`
+
+  开启事件监听
+
+- `virtual void del_listen() = 0;`
+
+  关闭事件监听
+
+- `virtual void update_ep() = 0;`
+
+  更新事件
 
 ---
 
@@ -125,7 +142,7 @@ public:
     void setrevents(const uint32_t revents); // 设置触发的事件类型
     void enable_events(uint32_t op);  // 启用指定的事件类型
     void disable_events(uint32_t op); // 禁用指定的事件类型
-    void update_ep();                 // 更新监听事件
+    void update_ep() override;                 // 更新监听事件
     void handle_cb();                 // 处理事件回调
 
     bool readable();                  // 检查是否可读
@@ -138,8 +155,8 @@ public:
     void disable_ET();                // 禁用边缘触发模式
 
     void reset_events();              // 重置事件类型
-    void del_listen();                // 删除监听
-    void enable_listen();             // 启用监听
+    void del_listen() override;                // 删除监听
+    void enable_listen() override;             // 启用监听
     void disable_cb() override;       // 禁用回调函数
     void close() override;            // 关闭事件
 
@@ -194,7 +211,7 @@ private:
 - `void disable_events(uint32_t op);`  
   禁用指定的事件类型。
 
-- `void update_ep();`  
+- `void update_ep() override;`  
   更新事件在 epoll 中的状态。
 
 - `void handle_cb();`  
@@ -227,10 +244,10 @@ private:
 - `void reset_events();`  
   重置事件类型。
 
-- `void del_listen();`  
+- `void del_listen() override;`  
   删除事件监听。
 
-- `void enable_listen();`  
+- `void enable_listen() override;`  
   启用事件监听。
 
 - `void disable_cb() override;`  
@@ -682,9 +699,9 @@ public:
     Callback getwcb();
     Callback getecb();
 
-    void update_ep();                // 更新监听事件
-    void del_listen();               // 取消监听
-    void enable_listen();            // 启用监听
+    void update_ep() override;                // 更新监听事件
+    void del_listen() override;               // 取消监听
+    void enable_listen() override;            // 启用监听
 
     void sendout(const char* data, size_t len);   // 发送数据
     void sendout(const std::string& data);        // 发送数据
@@ -751,13 +768,13 @@ private:
 - `void setcb(const RCallback& rcb, const Callback& wcb, const Callback& ecb);`  
   设置读、写、错误事件的回调函数。
 
-- `void update_ep();`  
+- `void update_ep() override;`  
   更新监听事件。
 
-- `void del_listen();`  
+- `void del_listen() override;`  
   取消监听。
 
-- `void enable_listen();`  
+- `void enable_listen() override;`  
   启用监听。
 
 - `void sendout(const char* data, size_t len);`  
@@ -836,10 +853,15 @@ public:
     void setrcb(const RCallback& rcb);
     void setecb(const Callback& ecb);
     void init_sock(int port);
-    void start();       // 开始监听
-    void stop();        // 停止监听
-    void update_ep();   // 更新监听事件
-
+    /** v1.0.0 **/
+    //void start();       // 开始监听
+    //void stop();        // 停止监听
+    
+    /** v1.0.1 **/
+    void enable_listen() override;	// 开始监听
+    void del_listen() override;		// 停止监听
+    
+	void update_ep() override;   // 更新监听事件
     size_t receive(char* data, size_t len);  // 接收数据到指定内存
     std::string receive(size_t len);         // 接收指定长度的数据
     std::string receive();                   // 接收所有可读数据
@@ -891,13 +913,13 @@ private:
 - `void init_sock(int port);`  
   初始化 UDP 套接字。
 
-- `void start();`  
+- `void enable_listen() override;`  
   开始监听 UDP 数据包。
 
-- `void stop();`  
+- `void del_listen() override;`  
   停止监听。
 
-- `void update_ep();`  
+- `void update_ep() override;`  
   更新监听事件。
 
 - `size_t receive(char* data, size_t len);`  
@@ -956,8 +978,14 @@ public:
     int getfd() const;
     eventloop* getloop() const override;
     void setcb(const Callback& cb);
-    void start();
-    void stop();
+    /** v1.0.0 **/
+    //void start();
+    //void stop();
+    /** v1.0.1 **/
+    void enable_listen() override;
+    void del_listen() override;
+    void update_ep() override;
+    
     void close() override;
     void disable_cb() override;
     Callback getcb();
@@ -995,12 +1023,16 @@ private:
 - `void setcb(const Callback& cb);`  
   设置定时器回调函数。
 
-- `void start();`  
+- `void enable_listen() override;`  
   启动定时器。
 
-- `void stop();`  
+- `void del_listen() override;`  
   停止定时器。
 
+- `void update_ep() override;`
+  
+  更新事件
+  
 - `void close() override;`  
   关闭定时器事件。
 
@@ -1035,8 +1067,9 @@ public:
     void add_signal(const std::vector<int>& signals);
     void setcb(const Callback& cb);
 
-    void enable_listen();
-    void del_listen();
+    void enable_listen() override;
+    void del_listen() override;
+    void update_ep() override;
     void disable_cb() override;
     void close() override;
     Callback getcb();
@@ -1073,12 +1106,16 @@ private:
 - `void setcb(const Callback& cb);`  
   设置信号处理回调函数。
 
-- `void enable_listen();`  
+- `void enable_listen() override;`  
   启用信号监听。
 
-- `void del_listen();`  
+- `void del_listen() override;`  
   停止信号监听。
 
+- `void update_ep() override;`
+  
+  更新事件
+  
 - `void disable_cb() override;`  
   禁用回调函数。
 
@@ -1191,23 +1228,28 @@ public:
     void set_tcpcb(const RCallback& rcb, const Callback& wcb, const Callback& ecb);
 
     // 事件操作
-    void add_ev(event* ev);
-    void del_ev(event* ev);
-    void mod_ev(event* ev);
-    void add_bev(bfevent* bev);
-    void del_bev(bfevent* bev);
-    void mod_bev(bfevent* bev);
-    void add_udpev(udpevent* uev);
-    udpevent* add_udpev(int port, const UCallback& rcb, const Callback& ecb);
-    void del_udpev(udpevent* uev);
-    void mod_udpev(udpevent* uev);
-    void add_sev(signalevent* sev);
+    void addev(base_event *ev);
+    void delev(base_event *ev);
+    void modev(base_event *ev);r
+    udpevent* add_udpev(int port, const UCallback& rcb, const Callback& ecb);	//udpevent推荐使用这个函数添加，出错会自动清理
     signalevent* add_sev(int signo, const SCallback& cb);
     signalevent* add_sev(const std::vector<int>& signals, const SCallback& cb);
-    void del_sev(signalevent* sev);
-    void add_timeev(timerevent* tev);
     timerevent* add_timeev(int timeout_ms, bool periodic, const Callback& cb);
-    void del_timeev(timerevent* tev);
+
+    /** v1.0.0 **/
+    /* void add_ev(event *ev);
+    void del_ev(event *ev);
+    void mod_ev(event *ev);
+    void add_bev(bfevent *bev);
+    void del_bev(bfevent *bev);
+    void mod_bev(bfevent *bev);
+    void add_udpev(udpevent *uev);
+    void del_udpev(udpevent *uev);
+    void mod_udpev(udpevent *uev);
+    void add_sev(signalevent* sev);
+    void del_sev(signalevent* sev);
+    void add_timeev(timerevent *tev);
+    void del_timeev(timerevent *tev); */
 
 private:
     void acceptcb_(int fd); // 处理新连接
@@ -1269,50 +1311,26 @@ private:
 - `void set_tcpcb(const RCallback& rcb, const Callback& wcb, const Callback& ecb);`  
   设置 TCP 连接的回调函数。
 
-- `void add_ev(event* ev);`  
-  添加事件。
+- `void addev(base_event *ev);`
 
-- `void del_ev(event* ev);`  
-  删除事件。
+  添加通用事件(可传任意事件类型)
 
-- `void mod_ev(event* ev);`  
-  修改事件。
+- `void delev(base_event *ev);`
 
-- `void add_bev(bfevent* bev);`  
-  添加缓冲事件。
+  删除通用事件(可传任意事件类型)
 
-- `void del_bev(bfevent* bev);`  
-  删除缓冲事件。
+- `void modev(base_event *ev);`
 
-- `void mod_bev(bfevent* bev);`  
-  修改缓冲事件。
-
-- `void add_udpev(udpevent* uev);`  
-  添加 UDP 事件。
+  修改通用事件(可传任意事件类型)
 
 - `udpevent* add_udpev(int port, const UCallback& rcb, const Callback& ecb);`  
   添加并初始化 UDP 事件。
 
-- `void del_udpev(udpevent* uev);`  
-  删除 UDP 事件。
-
-- `void mod_udpev(udpevent* uev);`  
-  修改 UDP 事件。
-
-- `void add_sev(signalevent* sev);`  
-  添加信号事件。
-
 - `signalevent* add_sev(int signo, const SCallback& cb);`  
   添加并初始化信号事件。
 
-- `void del_sev(signalevent* sev);`  
-  删除信号事件。
-
 - `timerevent* add_timeev(int timeout_ms, bool periodic, const Callback& cb);`  
   添加并初始化定时器事件。
-
-- `void del_timeev(timerevent* tev);`  
-  删除定时器事件。
 
 ---
 
