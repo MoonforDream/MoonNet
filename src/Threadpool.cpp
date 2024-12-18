@@ -44,6 +44,7 @@ void Threadpool::init(){
     run_num=0;
     live_num=0;
     exit_num=0;
+    max_thr_num=std::thread::hardware_concurrency()+1;
     adjust_thr=std::thread([this]{
         this->adjust_task();
     });
