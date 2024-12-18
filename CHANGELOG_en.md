@@ -8,6 +8,10 @@
 
 ## Changelog
 
+### v1.0.2
+
+- Fix the issue where the max_thr_num variable in the Threadpool is not set
+
 ### v1.0.1
 
 - Updated the `base_event` API to unify operations across various event types.

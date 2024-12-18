@@ -6,6 +6,10 @@
 
 ## 更新日志 (Changelog)
 
+### v1.0.2
+
+- 修正Threadpool中的max_thr_num变量未设置问题
+
 ### v1.0.1
 
 - 更新base_event的api，统一多种事件类型的操作
