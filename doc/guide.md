@@ -17,7 +17,7 @@ MoonNet 是一个基于 C++ 的轻量级、高性能、事件驱动的网络库�
    - [eventloop](#eventloop)
    - [loopthread](#loopthread)
    - [looptpool](#looptpool)
-   - [Threadpool](#threadpool)
+   - [threadpool](#threadpool)
    - [buffer](#buffer)
    - [bfevent](#bfevent)
    - [udpevent](#udpevent)
@@ -520,21 +520,21 @@ private:
 
 ---
 
-### `Threadpool`
+### `threadpool`
 
 **描述 (Description):**
 
-`Threadpool` 类实现了一个通用的线程池，用于执行任意的任务函数。
+`threadpool` 类实现了一个通用的线程池，用于执行任意的任务函数。
 
 **接口 (Interface):**
 
 ```cpp
 namespace moon {
 
-class Threadpool {
+class threadpool {
 public:
-    Threadpool(int num);
-    ~Threadpool();
+    threadpool(int num);
+    ~threadpool();
 
     // 添加任务到线程池
     template<typename _Fn, typename... _Args>
@@ -565,10 +565,10 @@ private:
 
 **函数说明 (Function Description):**
 
-- `Threadpool(int num);`  
+- `threadpool(int num);`  
   构造函数，初始化线程池，指定最小线程数。
 
-- `~Threadpool();`  
+- `~threadpool();`  
   析构函数，销毁线程池。
 
 - `void add_task(_Fn&& fn, _Args&&... args);`  

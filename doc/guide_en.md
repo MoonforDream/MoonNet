@@ -17,7 +17,7 @@ MoonNet is a lightweight, high-performance, event-driven network library based o
    - [eventloop](#eventloop)
    - [loopthread](#loopthread)
    - [looptpool](#looptpool)
-   - [Threadpool](#threadpool)
+   - [threadpool](#threadpool)
    - [buffer](#buffer)
    - [bfevent](#bfevent)
    - [udpevent](#udpevent)
@@ -520,21 +520,21 @@ private:
 
 ---
 
-### `Threadpool`
+### `threadpool`
 
 **Description:**
 
-The `Threadpool` class implements a general-purpose thread pool for executing arbitrary task functions.
+The `threadpool` class implements a general-purpose thread pool for executing arbitrary task functions.
 
 **Interface:**
 
 ```cpp
 namespace moon {
 
-class Threadpool {
+class threadpool {
 public:
-    Threadpool(int num);
-    ~Threadpool();
+    threadpool(int num);
+    ~threadpool();
 
     // Adds a task to the thread pool
     template<typename _Fn, typename... _Args>
@@ -565,10 +565,10 @@ private:
 
 **Function Descriptions:**
 
-- `Threadpool(int num);`  
+- `threadpool(int num);`  
   Constructor that initializes the thread pool with a specified minimum number of threads.
 
-- `~Threadpool();`  
+- `~threadpool();`  
   Destructor that shuts down the thread pool.
 
 - `void add_task(_Fn&& fn, _Args&&... args);`  
