@@ -6,15 +6,15 @@
 
 ## 更新日志 (Changelog)
 
-### v2.0.0-pre
+### 预告
 
-- 发布MoonNetV2版本，当前为预发布模式(预告)，具体时间未知，MoonNetV2将会陆陆续续新增以下组件：
-- 无锁环形缓冲区组件(`ringbuff`)
-- 无锁线程池组件(`lfthreadpool`)
-- 内存池(`memorypool`)
-- 异步日志组件(`logger`)，并且包含业务程序崩溃日志上传等功能
-- 支持http/https支持
-- 可能会选择重构MoonNetV1版本的一些组件，比方原始指针替换为智能指针
+- 发布MoonNetV1.1版本，当前为预发布模式(预告)，具体时间未知，MoonNet将会陆陆续续新增以下组件：
+- 无锁环形缓冲区组件(`ringbuff`),预计MoonNetv1.1即将提供
+- 无锁线程池组件(`lfthreadpool`),预计MoonNetv1.1即将提供
+- 异步日志组件(`logger`)，并且包含业务程序崩溃日志上传等功能,预计MoonNetv1.2提供
+- 内存池(`memorypool`),预计MoonNetv1.3提供
+- 支持http/https支持,预计MoonNetv1.3提供
+- MoonNetV2可能会选择重构MoonNetV1.0版本的一些组件，比方原始指针替换为智能指针
 
 ​	
 

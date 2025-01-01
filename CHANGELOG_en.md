@@ -8,15 +8,15 @@
 
 ## Changelog
 
-### v2.0.0-pre
+### Pre
 
-- Release of MoonNetV2 version, currently in pre-release mode (announcement), with the exact release date unknown. MoonNetV2 will gradually introduce the following components:
-- Lock-free ring buffer component (`ringbuff`)
-- Lock-free thread pool component (`lfthreadpool`)
-- Memory pool (`memorypool`)
-- Asynchronous logging component (`logger`), including features such as uploading crash logs from business applications
-- Support for HTTP/HTTPS
-- Possible refactoring of some components from MoonNetV1, for example, replacing raw pointers with smart pointers
+- Release of MoonNet V1.1: Currently in pre-release mode (announcement), the exact release date is unknown. MoonNet will gradually introduce the following components:
+- Lock-free Ring Buffer Component (`ringbuff`): Expected to be provided in MoonNet V1.1.
+- Lock-free Thread Pool Component (`lfthreadpool`): Expected to be provided in MoonNet V1.1.
+- Asynchronous Logging Component (`logger`): Including features such as uploading crash logs from business applications, expected to be provided in MoonNet V1.2.
+- Memory Pool (`memorypool`): Expected to be provided in MoonNet V1.3.
+- Support for HTTP/HTTPS: Expected to be provided in MoonNet V1.3.
+- MoonNet V2: May choose to refactor some components from MoonNet V1.0, for example, replacing raw pointers with smart pointers.
 
 ​	
 
