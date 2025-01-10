@@ -15,7 +15,7 @@
     '---'                                               '---'           `----'
 ```
 
-
+[![Build Status](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml/badge.svg)](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml)&nbsp;
 [![Release](https://img.shields.io/github/release/MoonforDream/MoonNet.svg)](https://github.com/MoonforDream/MoonNet/releases/latest)
 
 
