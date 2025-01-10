@@ -1,174 +1,210 @@
 [
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
-  "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/Threadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/Threadpool.cpp",
-  "file": "/home/moon/cstudy/MoonNet/src/Threadpool.cpp",
-  "output": "src/CMakeFiles/moonnet.dir/Threadpool.cpp.o"
-},
-{
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/acceptor.cpp.o -c /home/moon/cstudy/MoonNet/src/acceptor.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/acceptor.cpp",
   "output": "src/CMakeFiles/moonnet.dir/acceptor.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/bfevent.cpp.o -c /home/moon/cstudy/MoonNet/src/bfevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/bfevent.cpp",
   "output": "src/CMakeFiles/moonnet.dir/bfevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/buffer.cpp.o -c /home/moon/cstudy/MoonNet/src/buffer.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/buffer.cpp",
   "output": "src/CMakeFiles/moonnet.dir/buffer.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/event.cpp.o -c /home/moon/cstudy/MoonNet/src/event.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/event.cpp",
   "output": "src/CMakeFiles/moonnet.dir/event.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/eventloop.cpp.o -c /home/moon/cstudy/MoonNet/src/eventloop.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/eventloop.cpp",
   "output": "src/CMakeFiles/moonnet.dir/eventloop.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/lfthread.cpp.o -c /home/moon/cstudy/MoonNet/src/lfthread.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/lfthread.cpp",
+  "output": "src/CMakeFiles/moonnet.dir/lfthread.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/lfthreadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/lfthreadpool.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/lfthreadpool.cpp",
+  "output": "src/CMakeFiles/moonnet.dir/lfthreadpool.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/loopthread.cpp.o -c /home/moon/cstudy/MoonNet/src/loopthread.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/loopthread.cpp",
   "output": "src/CMakeFiles/moonnet.dir/loopthread.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/looptpool.cpp.o -c /home/moon/cstudy/MoonNet/src/looptpool.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/looptpool.cpp",
   "output": "src/CMakeFiles/moonnet.dir/looptpool.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/server.cpp.o -c /home/moon/cstudy/MoonNet/src/server.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/server.cpp",
   "output": "src/CMakeFiles/moonnet.dir/server.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/signalevent.cpp.o -c /home/moon/cstudy/MoonNet/src/signalevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/signalevent.cpp",
   "output": "src/CMakeFiles/moonnet.dir/signalevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/threadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/threadpool.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/threadpool.cpp",
+  "output": "src/CMakeFiles/moonnet.dir/threadpool.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/timerevent.cpp.o -c /home/moon/cstudy/MoonNet/src/timerevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/timerevent.cpp",
   "output": "src/CMakeFiles/moonnet.dir/timerevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/udpevent.cpp.o -c /home/moon/cstudy/MoonNet/src/udpevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/udpevent.cpp",
   "output": "src/CMakeFiles/moonnet.dir/udpevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++ -Dmoonnet_EXPORTS -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -fPIC -o CMakeFiles/moonnet.dir/wrap.cpp.o -c /home/moon/cstudy/MoonNet/src/wrap.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/wrap.cpp",
   "output": "src/CMakeFiles/moonnet.dir/wrap.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
-  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/Threadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/Threadpool.cpp",
-  "file": "/home/moon/cstudy/MoonNet/src/Threadpool.cpp",
-  "output": "src/CMakeFiles/moonnet_static.dir/Threadpool.cpp.o"
-},
-{
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/acceptor.cpp.o -c /home/moon/cstudy/MoonNet/src/acceptor.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/acceptor.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/acceptor.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/bfevent.cpp.o -c /home/moon/cstudy/MoonNet/src/bfevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/bfevent.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/bfevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/buffer.cpp.o -c /home/moon/cstudy/MoonNet/src/buffer.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/buffer.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/buffer.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/event.cpp.o -c /home/moon/cstudy/MoonNet/src/event.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/event.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/event.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/eventloop.cpp.o -c /home/moon/cstudy/MoonNet/src/eventloop.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/eventloop.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/eventloop.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/lfthread.cpp.o -c /home/moon/cstudy/MoonNet/src/lfthread.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/lfthread.cpp",
+  "output": "src/CMakeFiles/moonnet_static.dir/lfthread.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/lfthreadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/lfthreadpool.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/lfthreadpool.cpp",
+  "output": "src/CMakeFiles/moonnet_static.dir/lfthreadpool.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/loopthread.cpp.o -c /home/moon/cstudy/MoonNet/src/loopthread.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/loopthread.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/loopthread.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/looptpool.cpp.o -c /home/moon/cstudy/MoonNet/src/looptpool.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/looptpool.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/looptpool.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/server.cpp.o -c /home/moon/cstudy/MoonNet/src/server.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/server.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/server.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/signalevent.cpp.o -c /home/moon/cstudy/MoonNet/src/signalevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/signalevent.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/signalevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
+  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/threadpool.cpp.o -c /home/moon/cstudy/MoonNet/src/threadpool.cpp",
+  "file": "/home/moon/cstudy/MoonNet/src/threadpool.cpp",
+  "output": "src/CMakeFiles/moonnet_static.dir/threadpool.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/timerevent.cpp.o -c /home/moon/cstudy/MoonNet/src/timerevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/timerevent.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/timerevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/udpevent.cpp.o -c /home/moon/cstudy/MoonNet/src/udpevent.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/udpevent.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/udpevent.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/src",
+  "directory": "/home/moon/cstudy/MoonNet/build/src",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/moonnet_static.dir/wrap.cpp.o -c /home/moon/cstudy/MoonNet/src/wrap.cpp",
   "file": "/home/moon/cstudy/MoonNet/src/wrap.cpp",
   "output": "src/CMakeFiles/moonnet_static.dir/wrap.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/example",
+  "directory": "/home/moon/cstudy/MoonNet/build/example",
+  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/lfthreadpool_test.dir/lfthreadpool_test.cpp.o -c /home/moon/cstudy/MoonNet/example/lfthreadpool_test.cpp",
+  "file": "/home/moon/cstudy/MoonNet/example/lfthreadpool_test.cpp",
+  "output": "example/CMakeFiles/lfthreadpool_test.dir/lfthreadpool_test.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/example",
+  "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/ringbuff_test.dir/ringbuff_test.cpp.o -c /home/moon/cstudy/MoonNet/example/ringbuff_test.cpp",
+  "file": "/home/moon/cstudy/MoonNet/example/ringbuff_test.cpp",
+  "output": "example/CMakeFiles/ringbuff_test.dir/ringbuff_test.cpp.o"
+},
+{
+  "directory": "/home/moon/cstudy/MoonNet/build/example",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/tcpserver.dir/tcpserver.cpp.o -c /home/moon/cstudy/MoonNet/example/tcpserver.cpp",
   "file": "/home/moon/cstudy/MoonNet/example/tcpserver.cpp",
   "output": "example/CMakeFiles/tcpserver.dir/tcpserver.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/example",
+  "directory": "/home/moon/cstudy/MoonNet/build/example",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/timerevent_test.dir/timerevent_test.cpp.o -c /home/moon/cstudy/MoonNet/example/timerevent_test.cpp",
   "file": "/home/moon/cstudy/MoonNet/example/timerevent_test.cpp",
   "output": "example/CMakeFiles/timerevent_test.dir/timerevent_test.cpp.o"
 },
 {
-  "directory": "/home/moon/cstudy/MoonNet/build/linux-debug/example",
+  "directory": "/home/moon/cstudy/MoonNet/build/example",
   "command": "/usr/bin/c++  -I/home/moon/cstudy/MoonNet/include -I/home/moon/cstudy/MoonNet/src/../include/moonnet  -O2 -Wall -std=gnu++11 -o CMakeFiles/udpserver.dir/udpserver.cpp.o -c /home/moon/cstudy/MoonNet/example/udpserver.cpp",
   "file": "/home/moon/cstudy/MoonNet/example/udpserver.cpp",
   "output": "example/CMakeFiles/udpserver.dir/udpserver.cpp.o"
