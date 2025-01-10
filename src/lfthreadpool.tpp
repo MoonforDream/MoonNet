@@ -39,6 +39,19 @@ Author: MoonforDream
 
 namespace moon {
 
+    /**
+     * @brief Adds a new task to the thread pool.
+     *        The task is assigned to a thread based on the current pool mode
+     * and load balancing.
+     *
+     * @tparam _Fn Function type of the task.
+     * @tparam _Args Variadic template for function arguments.
+     * @param fn Function representing the task.
+     * @param args Arguments to pass to the function.
+     *
+     * @return bool True if the task was added successfully, False if the pool
+     * is shutting down or if an error occurred.
+     */
     template <typename _Fn, typename... _Args>
     bool lfthreadpool::add_task(_Fn&& fn, _Args&&... args) {
         if (shutdown_.load(std::memory_order_acquire)) return false;
@@ -49,6 +62,19 @@ namespace moon {
         return workers_[idx]->enqueue_task(f);
     }
 
+    /**
+     * @brief Adds a new task to the thread pool by moving it.
+     *        This method is used to avoid copying when possible, enhancing
+     * performance.
+     *
+     * @tparam _Fn Function type of the task.
+     * @tparam _Args Variadic template for function arguments.
+     * @param fn Function representing the task.
+     * @param args Arguments to pass to the function.
+     *
+     * @return bool True if the task was added successfully, False if the pool
+     * is shutting down or if an error occurred.
+     */
     template <typename _Fn, typename... _Args>
     bool lfthreadpool::add_task_move(_Fn&& fn, _Args&&... args) {
         if (shutdown_.load(std::memory_order_acquire)) return false;
