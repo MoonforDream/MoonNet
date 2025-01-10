@@ -16,6 +16,7 @@
 ```
 
 
+[![Release](https://img.shields.io/github/release/MoonforDream/MoonNet.svg)](https://github.com/MoonforDream/MoonNet/releases/latest)
 
 
 
@@ -135,7 +136,7 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 
 ​		
 
-**MoonNet** is a high-performance server-side network library focused on a Reactor model，providing server modules based on the master-slave Reactor multi-threaded model. Leveraging Linux's `epoll` mechanism combined with multithreading and event-driven design, MoonNet provides efficient and scalable network communication capabilities. It supports both TCP and UDP protocols, with built-in signal handling and timer functionalities, making it suitable for building high-concurrency, low-latency server applications.
+**MoonNet** is a high-performance server-side network library focused on a Reactor-based model, offering server modules based on a master-slave Reactor multi-threaded model. It utilizes Linux's `epoll` mechanism, combined with multithreading and event-driven design, to provide efficient and scalable network communication capabilities. MoonNet supports TCP and UDP protocols and includes built-in signal handling and timer functions, offering a rich array of components such as lock-free circular buffers and lock-free thread pools for building server applications, suitable for creating high-concurrency, low-latency server applications.
 
 
 
@@ -145,6 +146,7 @@ MoonNet 通过简洁的接口设计和内置的多线程管理，提供了与传
 - **High Performance**: Event-driven model based on `epoll`, supporting a large number of concurrent connections.
 - **Multithreading**: Master-worker Reactor pattern with a thread pool managing multiple event loops, fully utilizing multi-core CPUs.
 - **Rich Event Types**: Supports TCP, UDP, timer, and signal events.
+- **Rich Component Modules**: Provides a rich set of components to build server applications, allowing you to flexibly implement project architecture and specific functionalities.
 - **Ease of Use**: Simple interface design, easy to integrate into various projects.
 - **Static/Dynamic Load Balancing**: Provides static and dynamic load balancing solutions
 
