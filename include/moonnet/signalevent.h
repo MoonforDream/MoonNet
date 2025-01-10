@@ -25,12 +25,11 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: MoonforDream
 
 */
-
 
 // signalevent.h
 
@@ -42,7 +41,6 @@ Author: MoonforDream
 #include <unistd.h>
 #include <vector>
 #include <signal.h>
-
 
 /** 弃用api
  * start->enable_listen
@@ -73,21 +71,20 @@ namespace moon {
         void update_ep() override;
         void enable_listen() override;
         void del_listen() override;
-        void close() override {
-            del_listen();
-        }
+        void close() override { del_listen(); }
+
     private:
         static void handle_signal(int signo);
         void handle_read();
 
     private:
         eventloop* loop_;
-        int pipe_fd_[2]; // 管道的读写端
+        int pipe_fd_[2];  // 管道的读写端
         event* ev_;
         Callback cb_;
-        static signalevent* sigev_; // 单例实例
+        static signalevent* sigev_;  // 单例实例
     };
 
-}
+}  // namespace moon
 
-#endif // !_SIGNALEVENT_H_
+#endif  // !_SIGNALEVENT_H_

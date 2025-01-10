@@ -146,7 +146,17 @@ void bfevent::enable_listen(){
 }
 
 
-
+/**
+ * @brief Sends data out through the event's file descriptor.
+ *
+ * Attempts to write the provided data (`data`, `len`) to the file descriptor.
+ * If the event is not currently writable and the output buffer is empty, it tries to write directly.
+ * Otherwise, it appends the remaining data to the output buffer and enables write events.
+ * Handles partial writes and ensures that the write callback is invoked when all data is sent.
+ *
+ * @param data Pointer to the data to be sent.
+ * @param len The length of the data to be sent in bytes.
+ */
 void bfevent::sendout(const char* data, size_t len){
     ssize_t n=0;
     ssize_t relen=len;
@@ -204,19 +214,52 @@ void bfevent::sendout(const char* data, size_t len){
     }
 }
 
+/**
+ * @brief Sends data out through the event's file descriptor using a `std::string`.
+ *
+ * Convenience function that sends the contents of the provided `std::string` (`data`) by calling the
+ * `sendout(const char*, size_t)` function.
+ *
+ * @param data The `std::string` containing the data to be sent.
+ */
 void bfevent::sendout(const std::string& data){
     sendout(data.c_str(), data.size());
 }
 
+/**
+ * @brief Receives data from the event's input buffer into a provided buffer.
+ *
+ * Copies up to `len` bytes from the input buffer (`inbuff_`) into the provided `data` buffer.
+ *
+ * @param data Pointer to the buffer where received data will be stored.
+ * @param len The maximum number of bytes to receive.
+ *
+ * @return The number of bytes actually received and copied into `data`.
+ */
 size_t bfevent::receive(char* data, size_t len){
     return inbuff_.remove(data, len);
 }
 
+/**
+ * @brief Receives a specified amount of data from the event's input buffer as a `std::string`.
+ *
+ * Copies up to `len` bytes from the input buffer (`inbuff_`) into a new `std::string` and returns it.
+ *
+ * @param len The number of bytes to receive.
+ *
+ * @return A `std::string` containing the received data.
+ */
 std::string bfevent::receive(size_t len){
     return inbuff_.remove(len);
 }
 
-
+/**
+ * @brief Receives all available data from the event's input buffer as a `std::string`.
+ *
+ * Copies all available bytes from the input buffer (`inbuff_`) into a new `std::string` and returns it.
+ *
+ * @return A `std::string` containing all received data.
+ */
 std::string bfevent::receive(){
     return inbuff_.remove(inbuff_.readbytes());
 }

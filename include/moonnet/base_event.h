@@ -25,31 +25,30 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: MoonforDream
 
 */
-
 
 #ifndef _BASE_EVENT_H
 #define _BASE_EVENT_H
 
 namespace moon {
 
-class eventloop;
-class base_event {
-public:
-    virtual ~base_event(){}
-    virtual eventloop* getloop() const=0;
-    virtual void close()=0;
-    virtual void disable_cb()=0;
-    /** v1.0.1 **/
-    virtual void enable_listen()=0;
-    virtual void del_listen()=0;
-    virtual void update_ep()=0;
-};
+    class eventloop;
+    class base_event {
+    public:
+        virtual ~base_event() {}
+        virtual eventloop* getloop() const = 0;
+        virtual void close() = 0;
+        virtual void disable_cb() = 0;
+        /** v1.0.1 **/
+        virtual void enable_listen() = 0;
+        virtual void del_listen() = 0;
+        virtual void update_ep() = 0;
+    };
 
-}
+}  // namespace moon
 
 #endif

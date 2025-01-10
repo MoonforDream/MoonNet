@@ -26,11 +26,16 @@ MoonNet 是一个基于 C++ 的轻量级、高性能、事件驱动的网络库�
    - [acceptor](#acceptor)
    - [server](#server)
    - [wrap](#wrap)
+   - [ringbuff](#ringbuff)
+   - [lfthread](#lfthread)
+   - [lfthreadpool](#lfthreadpool)
 3. [使用示例 (Usage Examples)](#使用示例-usage-examples)
    - [TCP 服务器示例 (TCP Server Example)](#tcp-服务器示例-tcp-server-example)
    - [UDP 服务器示例 (UDP Server Example)](#udp-服务器示例-udp-server-example)
    - [定时器示例 (Timer Example)](#定时器示例-timer-example)
    - [信号处理示例 (Signal Handling Example)](#信号处理示例-signal-handling-example)
+   - [ringbuff 使用示例 (RingBuff Usage Example)](#ringbuff-使用示例ringbuff-usage-example)
+   - [lfthreadpool 使用示例 (LFThreadpool Usage Example)](#lfthreadpool-使用示例lfthreadpool-usage-example)
 4. [错误处理 (Error Handling)](#错误处理-error-handling)
 5. [常见问题 (FAQs)](#常见问题-faqs)
 6. [结语 (Conclusion)](#结语-conclusion)
@@ -50,6 +55,10 @@ MoonNet 的核心模块包括：
 - **信号事件 (`signalevent`)**：处理 UNIX 信号，将信号事件集成到事件循环中。
 - **连接器 (`acceptor`)**：监听 TCP 端口并接受新连接。
 - **服务器 (`server`)**：封装了 TCP 和 UDP 服务器功能，管理连接、事件和线程池。
+- **线程池(`threadpool`)**：实现一个简单线程池，提供静态或动态模式，提供简单易用的接口函数
+- **无锁环形缓冲区(`ringbuff`)**：实现了lock-free的环形缓冲区，提供简单易用的接口函数
+- **无锁任务线程(`lfthread`)**：将`ringbuff`作为任务队列与线程封装成lfthread类，便于管理
+- **无锁线程池(`lfthreadpool`)**：基于一个线程一个`ringbuff`作为任务队列的架构(封装成`lfthread`)，实现了lock-free的线程池，提供静态或动态模式，实现了动态退避的线程休眠调整策略，以及任务队列满后的拒绝策略
 
 > **注意**：标记类似为`/** v1.0.0 **/`的注释部分包含已弃用或以前版本的事件处理函数。这些已被通用的函数所取代，为事件管理提供了一种统一的方法。
 
@@ -1428,6 +1437,237 @@ ssize_t Readline(int fd, void* vptr, size_t maxlen);
 
 ---
 
+### `ringbuff`
+
+**描述 (Description):**
+
+`ringbuff` 是一个无锁的环形缓冲区，设计用于高效、高性能的场景，适用于多线程同时生产和消费数据的情况。这种结构特别适合需要最小延迟和开销的实时数据处理应用。
+
+**接口 (Interface):**
+
+```cpp
+namespace moon {
+
+    // 无锁环形缓冲区 RingBuffer
+    // lock-free ringbuffer
+    template <class T>
+    class ringbuff {
+    public:
+        ringbuff(size_t size = 1024)
+            : head_(0),
+              tail_(0),
+              capacity_(adj_size(size)),
+              buffer_(new T[capacity_]) {}
+        //        ~ringbuff()=default;
+        ~ringbuff() { delete[] buffer_; }
+        /** push function **/
+        bool push(const T& item);
+        // push with move
+        bool push_move(T&& item);
+        /** pop function **/
+        bool pop(T& item);
+        // pop with move
+        bool pop_move(T& item);
+
+        /** performance function **/
+        size_t capacity() const;
+        size_t size() const;
+        bool empty();
+        bool full();
+        void swap(ringbuff& other) noexcept;
+
+        /** swap_to function **/
+        void swap_to_list(std::list<T>& list_);
+        void swap_to_vector(std::vector<T>& vec_);
+        std::list<T> swap_to_list();
+        std::vector<T> swap_to_vector();
+
+    private:
+        bool is_powtwo(size_t n) const;
+        size_t next_powtwo(size_t n) const;
+        size_t adj_size(size_t size) const;
+
+    private:
+        // avoid pseudo shareing
+        std::atomic<size_t> head_ alignas(64);
+        std::atomic<size_t> tail_ alignas(64);
+        //        std::unique_ptr<T[]> buffer_;
+        size_t capacity_;
+        T* buffer_;
+    };
+
+}  // namespace moon
+```
+
+**函数说明 (Function Description):**
+
+- `ringbuff(size_t size = 1024)`: 构造函数，初始化环形缓冲区并设定容量，默认容量为1024，容量会调整为最近的二次幂以优化性能。
+- `~ringbuff()`: 析构函数，清理分配的缓冲区。
+- `bool push(const T& item)`: 尝试向缓冲区头部添加一个元素。如果成功返回 `true`；如果缓冲区满了，则返回 `false`。此方法会复制元素。
+- `bool push_move(T&& item)`: 类似于 `push`，但使用移动语义来避免复制元素。如果成功返回 `true`；如果缓冲区满了，则返回 `false`。
+- `bool pop(T& item)`: 尝试从缓冲区尾部移除一个元素，并将其复制到提供的变量中。如果成功返回 `true`；如果缓冲区空，则返回 `false`。
+- `bool pop_move(T& item)`: 类似于 `pop`，但使用移动语义来移动元素。如果成功返回 `true`；如果缓冲区空，则返回 `false`。
+- `size_t capacity() const`: 返回缓冲区的当前容量。
+- `size_t size() const`: 返回缓冲区中当前的元素数量，**该操作需要额外的原子操作，性能损失，请谨慎使用。**
+- `bool empty() const`: 检查缓冲区是否为空。
+- `bool full() const`: 检查缓冲区是否已满。
+- `void swap(ringbuff& other) noexcept`: 与另一个 `ringbuff` 实例交换内容，包括它们的内部状态，无需复制元素。
+- `void swap_to_list(std::list<T>& list_)`: 将缓冲区中的所有元素移动到提供的 `std::list` 中，之后清空缓冲区。
+- `void swap_to_vector(std::vector<T>& vec_)`: 将缓冲区中的所有元素移动到提供的 `std::vector` 中，之后清空缓冲区。
+- `std::list<T> swap_to_list()`: 创建一个新的 `std::list`，将缓冲区中的所有元素移动进去，返回这个列表。
+- `std::vector<T> swap_to_vector()`: 创建一个新的 `std::vector`，将缓冲区中的所有元素移动进去，返回这个向量。
+
+---
+
+### `lfthread`
+
+**描述 (Description):**
+
+`lfthread` 是一个轻量级、无锁的线程管理类，专为高并发和低延迟应用设计。它使用环形缓冲区 (`ringbuff`) 来队列任务，这些任务被封装在 `std::function<void()>` 中。该类在其自有线程中处理任务执行，并提供任务入队、线程关闭和缓冲区交换的机制。
+
+ **接口 (Interface):**
+
+```cpp
+namespace moon {
+
+    class lfthread {
+    public:
+        using task = std::function<void()>;
+        lfthread(size_t size)
+            : buffer_(size),
+              shutdown_(false),
+              t_(std::thread(&lfthread::t_task, this)) {}
+        ~lfthread() { t_shutdown(); }
+        bool enqueue_task(task _task);
+        bool enqueue_task_move(task&& _task);
+        void t_shutdown();
+        int getload() const;
+        void swap_to_ringbuff(ringbuff<task>& rb_);
+        void swap_to_list(std::list<task>& list_);
+        void swap_to_vector(std::vector<task>& vec_);
+        std::list<task> swap_to_list();
+        std::vector<task> swap_to_vector();
+
+        /** move copy **/
+        lfthread& operator=(lfthread&& other) noexcept;
+        lfthread(lfthread&& other) noexcept;
+
+    private:
+        void t_task();
+
+    private:
+        ringbuff<task> buffer_;  // 任务队列(无锁环形缓冲区)
+        bool shutdown_;  // 无任何其他线程操作，所以不需要原子变量
+        std::thread t_;
+    };
+
+}  // namespace moon
+```
+
+**函数说明 (Function Description):**
+
+- `lfthread(size_t size)`: 构造函数，为任务缓冲区指定大小。
+- `~lfthread()`: 析构函数，确保线程正确关闭。
+- `bool enqueue_task(task _task)`: 尝试将新任务入队到缓冲区。如果成功返回 `true`；如果缓冲区已满返回 `false`。
+- `bool enqueue_task_move(task&& _task)`: 类似于 `enqueue_task`，但使用移动语义来优化性能。
+- `void t_shutdown()`: 关闭线程，确保所有任务完成且线程可以加入，然后退出。
+- `int getload() const`: 返回缓冲区中当前的任务数量。
+- `void swap_to_ringbuff(ringbuff<task>& rb_)`: 与另一个环形缓冲区交换内部任务缓冲。
+- `void swap_to_list(std::list<task>& list_)`: 将缓冲区中的所有任务转移至指定的 std::list。
+- `void swap_to_vector(std::vector<task>& vec_)`: 将缓冲区中的所有任务转移至指定的 std::vector。
+- `std::list<task> swap_to_list()`: 返回一个 std::list，包含来自缓冲区的所有任务。
+- `std::vector<task> swap_to_vector()`: 返回一个 std::vector，包含来自缓冲区的所有任务。
+- `lfthread& operator=(lfthread&& other) noexcept`: 移动赋值操作符。
+- `lfthread(lfthread&& other) noexcept`: 移动构造函数。
+
+---
+
+### `lfthreadpool`
+
+**描述 (Description):**
+
+`lfthreadpool` 是一个多功能的线程池管理类，设计用来在动态或静态分配模式下管理任务执行的线程。它利用 `lfthread` 实例来管理单个线程和任务，允许在多线程环境中有效地分配和执行任务。线程池可以在静态模式（线程数量固定）或动态模式（根据工作负载调整线程数量）中操作。
+
+ **接口 (Interface):**
+
+```cpp
+#define ADJUST_TIMEOUT_SEC 5
+
+namespace moon {
+
+    class lfthread;
+
+    enum class PoolMode {
+        Static,  // 静态模式
+        Dynamic  // 动态模式
+    };
+
+    class lfthreadpool {
+    public:
+        lfthreadpool(int tnum = -1, size_t buffsize = 1024,
+                     PoolMode mode = PoolMode::Static);
+        ~lfthreadpool();
+        void init();
+        void t_shutdown();
+
+        /** add_task function **/
+        template <typename _Fn, typename... _Args>
+        bool add_task(_Fn&& fn, _Args&&... args);
+
+        template <typename _Fn, typename... _Args>
+        bool add_task_move(_Fn&& fn, _Args&&... args);
+
+        lfthreadpool(const lfthreadpool&) = delete;
+        lfthreadpool& operator=(const lfthreadpool&) = delete;
+
+    private:
+        const size_t getnext();
+        void adjust_task();
+        void del_thread_dispath();
+        void add_thread();
+        const size_t getminidx();
+        const size_t getmaxidx();
+        const int getload();
+        void setnum();
+        void setnum(size_t n);
+        int getcores() const;
+
+    private:
+        std::atomic<size_t> tnum_;
+        // size_t tnum_;
+        std::thread mentor_;
+        std::vector<lfthread*> workers_;
+        // bool shutdown_;
+        std::atomic<bool> shutdown_;
+        PoolMode mode_;
+        size_t buffsize_;
+        size_t next_ = 0;
+        int timesec_ = 5;
+        int coolsec_ = 30;
+        int load_max = 80;
+        int load_min = 20;
+        int max_tnum = 0;
+        int min_tnum = 0;
+    };
+
+}  // namespace moon
+```
+
+**函数说明 (Function Description):**
+
+- **`lfthreadpool(int tnum, size_t buffsize, PoolMode mode)`**: 构造具有特定线程数量、每线程缓冲区大小及操作模式的线程池。
+- **`~lfthreadpool()`**: 销毁线程池，确保所有线程都已正确关闭。
+- **`void init()`**: 初始化线程池，创建指定数量的线程。
+- **`void t_shutdown()`**: 安全地关闭池中的所有线程。
+- **`bool add_task(_Fn&& fn, _Args&&... args)`**: 向池中添加新任务；任务根据当前负载和池模式分配给线程。
+- **`bool add_task_move(_Fn&& fn, _Args&&... args)`**: 类似于 `add_task`，但使用移动语义来优化可移动任务的处理。
+- **`void adjust_task()`**: 如果池处于动态模式，根据当前负载和预定义阈值动态调整线程数量。
+- **`void del_thread_dispath()`**: 在不再需要时从池中移除线程，并将其任务重新分配给剩余线程。
+- **`void add_thread()`**: 为处理增加的负载向池中添加新线程。
+- **`int getload()`**: 计算所有线程的总负载作为其容量的百分比。
+
+---
+
 ## 使用示例 (Usage Examples)
 
 以下示例展示了如何使用 MoonNet 网络库构建 TCP 和 UDP 服务器，以及如何使用定时器和信号处理功能。
@@ -1708,6 +1948,93 @@ int main() {
    ```
 
    启动服务器，开始事件循环，信号处理开始工作。
+
+---
+
+### `ringbuff` 使用示例(RingBuff Usage Example)
+
+**代码示例(Code Example)**：
+
+```cpp
+#include <moonnet/moonnet.h> //可以只引用总头文件/You can only reference the header file
+//#include <moonnet/ringbuff.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    moon::ringbuff<std::string> buffer(32); // 初始化一个环形缓冲区，容量调整为最近的二次幂
+
+    // 向环形缓冲区中推送元素，使用 push 和 push_move
+    buffer.push("你好");
+    buffer.push_move(std::string("世界"));
+
+    // 从环形缓冲区中弹出元素
+    std::string data;
+    if (buffer.pop(data)) {
+        std::cout << "弹出: " << data << std::endl;
+    }
+
+    // 检查缓冲区大小和容量
+    std::cout << "当前缓冲区大小: " << buffer.size() << std::endl;
+    std::cout << "缓冲区容量: " << buffer.capacity() << std::endl;
+
+    // 检查缓冲区是否为空或已满
+    std::cout << "缓冲区是否为空? " << (buffer.empty() ? "是" : "否") << std::endl;
+    std::cout << "缓冲区是否已满? " << (buffer.full() ? "是" : "否") << std::endl;
+
+    // 使用 swap_to_vector 导出缓冲区内容
+    std::vector<std::string> vec;
+    buffer.swap_to_vector(vec);
+
+    // 显示导出的数据
+    for (auto &str : vec) {
+        std::cout << "导出: " << str << std::endl;
+    }
+
+    return 0;
+}
+```
+
+---
+
+### `lfthreadpool` 使用示例(LFThreadpool Usage Example)
+
+**代码示例(Code Example)**：
+
+```cpp
+#include <moonnet/moonnet.h> //可以只引用总头文件/You can only reference the header file
+//#include <moonnet/lfthreadpool.h>
+#include <iostream>
+#include <functional>
+
+void printTask(int num) {
+    std::cout << "任务 " << num << " 执行完毕。" << std::endl;
+}
+
+int main() {
+    // tnum为-1则表示采用系统自动设置线程池大小
+//    moon::lfthreadpool pool(4, 1024, moon::PoolMode::Dynamic); // 使用动态模式初始化线程池
+    // 采用系统设置线程池大小，以及使用静态模式
+    moon::lfthreadpool pool(-1,32);
+
+    // 向池中添加任务，使用 add_task 和 add_task_move
+    for (int i = 0; i < 10; i++) {
+        pool.add_task(printTask, i);
+        pool.add_task_move([=] { printTask(i + 10); });
+    }
+
+    // 留出一些时间让任务执行
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // 关闭线程池
+    pool.t_shutdown();
+
+    return 0;
+}
+```
+
+
 
 ---
 

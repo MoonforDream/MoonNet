@@ -20,6 +20,20 @@
 
 ​	
 
+### v1.1.0
+
+- **Release of MoonNetV1.1.0**: This version introduces lock-free components such as the `ringbuff` (lock-free circular buffer), `lfthread` (lock-free task thread), and `lfthreadpool` (lock-free thread pool). It also updates the project's coding standards and style, mandating that implementations of template functions be placed in .tpp files (visible in either include or src directories).
+- **Core Features**:
+    - Lock-free Circular Buffer (`ringbuff`): Enhanced performance through memory alignment and capacity optimization using powers of two. It provides straightforward interfaces and multiple swap functions.
+    - Lock-free Task Thread (`lfthread`): Acts as a critical component for implementing the `lfthreadpool`, encapsulating the lock-free circular buffer (`ringbuff`) and thread instance, primarily serving the `lfthreadpool`.
+    - Lock-free Thread Pool (`lfthreadpool`): Based on an architecture where each thread has a `ringbuff` as its task queue (encapsulated into `lfthread`), it achieves a lock-free thread pool. It offers static or dynamic modes, implements dynamic backoff strategies for thread sleeping adjustments, and policies for rejecting tasks when the queue is full.
+- **Other Changes**:
+    - The implementation of template functions for `threadpool` has been isolated into .tpp files.
+    - Provided implementation comments for each critical function interface to enhance understanding of the function's purpose, return values, and architecture.
+    - Modified the contents of the .clang-format file, updated the project's coding style, and reformatted all project source code according to the .clang-format style.
+
+​	
+
 ### v1.0.3
 
 - Due to personal preferences and preparations for MoonNetV2, renamed Threadpool to threadpool

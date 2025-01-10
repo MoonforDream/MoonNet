@@ -24,7 +24,6 @@ int Readn(SOCKET fd, void *vptr, int n);
 int Writen(SOCKET fd, const void *vptr, int n);
 int Readline(SOCKET fd, void *vptr, int maxlen);
 
-
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -41,25 +40,23 @@ int Readline(SOCKET fd, void *vptr, int maxlen);
 #include <cstdio>
 #include <fcntl.h>
 
-
 void settcpnodelay(int fd);
 void setreuse(int fd);
 void setnonblock(int fd);
 void perr_exit(const char *s);
-int Accept(int fd,struct sockaddr *sa,socklen_t *salenptr);
-int Bind(int fd,const struct sockaddr *sa,socklen_t salen);
-int Connect(int fd,const struct sockaddr *sa,socklen_t salen);
-int Listen(int fd,int backlog);
-int Socket(int family,int type,int protocol);
-ssize_t Read(int fd,void *ptr,size_t nbytes);
-ssize_t Write(int fd,const void *ptr,size_t nbytes);
+int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr);
+int Bind(int fd, const struct sockaddr *sa, socklen_t salen);
+int Connect(int fd, const struct sockaddr *sa, socklen_t salen);
+int Listen(int fd, int backlog);
+int Socket(int family, int type, int protocol);
+ssize_t Read(int fd, void *ptr, size_t nbytes);
+ssize_t Write(int fd, const void *ptr, size_t nbytes);
 int Close(int fd);
-ssize_t Readn(int fd,void *vptr,size_t n);
-ssize_t Writen(int fd,const void *vptr,size_t n);
-static ssize_t my_read(int fd,char *ptr);
-ssize_t Readline(int fd,void *vptr,size_t maxlen);
+ssize_t Readn(int fd, void *vptr, size_t n);
+ssize_t Writen(int fd, const void *vptr, size_t n);
+static ssize_t my_read(int fd, char *ptr);
+ssize_t Readline(int fd, void *vptr, size_t maxlen);
 
 #endif
 
 #endif
-

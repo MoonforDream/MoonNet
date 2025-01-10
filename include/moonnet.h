@@ -15,5 +15,9 @@
 #include "acceptor.h"
 #include "server.h"
 #include "wrap.h"
+#include "ringbuff.h"
+#include "lfthread.h"
+#include "lfthreadpool.h"
 
-#endif // !_MOONNET_H_
+
+#endif  // !_MOONNET_H_

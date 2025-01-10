@@ -26,11 +26,16 @@ MoonNet is a lightweight, high-performance, event-driven network library based o
    - [acceptor](#acceptor)
    - [server](#server)
    - [wrap](#wrap)
+   - [ringbuff](#ringbuff)
+   - [lfthread](#lfthread)
+   - [lfthreadpool](#lfthreadpool)
 3. [Usage Examples](#usage-examples)
    - [TCP Server Example](#tcp-server-example)
    - [UDP Server Example](#udp-server-example)
    - [Timer Example](#timer-example)
    - [Signal Handling Example](#signal-handling-example)
+   - [ringbuff Usage Example](#ringbuff-usage-example)
+   - [lfthreadpool Usage Example](#lfthreadpool-usage-example)
 4. [Error Handling](#error-handling)
 5. [Frequently Asked Questions (FAQs)](#frequently-asked-questions-faqs)
 6. [Conclusion](#conclusion)
@@ -50,6 +55,10 @@ The core modules of MoonNet include:
 - **Signal Event (`signalevent`)**: Handles UNIX signals, integrating signal events into the event loop.
 - **Acceptor (`acceptor`)**: Listens on TCP ports and accepts new connections.
 - **Server (`server`)**: Encapsulates TCP and UDP server functionalities, managing connections, events, and thread pools.
+- **Thread Pool (`threadpool`)**: Implement a simple thread pool with either static or dynamic modes, providing straightforward and easy-to-use interface functions.
+- **Lock-Free Ring Buffer (`ringbuff`)**: Implements a lock-free circular buffer, providing simple and easy-to-use interface functions.
+- **Lock-Free Task Thread (`lfthread`)**: Encapsulates `ringbuff` as a task queue and a thread into the lfthread class, facilitating management.
+- **Lock-Free Thread Pool (`lfthreadpool`)**: Based on an architecture where each thread has one `ringbuff` as a task queue (encapsulated as `lfthread`), this implements a lock-free thread pool. It provides static or dynamic modes, features dynamic backing-off strategies for thread sleeping adjustments, and includes a rejection strategy when the task queue is full.
 
 > **Note**: The commented-out section labeled `/** v1.0.0 **/` contains deprecated or previous versions of event handling functions. These have been superseded by the generalized functions to provide a unified approach to event management.
 
@@ -1397,6 +1406,238 @@ ssize_t Readline(int fd, void* vptr, size_t maxlen);
 
 ---
 
+### `ringbuff`
+
+**Description:**
+
+`ringbuff` is a lock-free, circular buffer designed for efficient, high-performance scenarios where multiple threads may be producing and consuming data concurrently. It is ideal for use cases where minimal latency and overhead are required, such as real-time data processing applications.
+
+**Interface:**
+
+```cpp
+namespace moon {
+
+    // 无锁环形缓冲区 RingBuffer
+    // lock-free ringbuffer
+    template <class T>
+    class ringbuff {
+    public:
+        ringbuff(size_t size = 1024)
+            : head_(0),
+              tail_(0),
+              capacity_(adj_size(size)),
+              buffer_(new T[capacity_]) {}
+        //        ~ringbuff()=default;
+        ~ringbuff() { delete[] buffer_; }
+        /** push function **/
+        bool push(const T& item);
+        // push with move
+        bool push_move(T&& item);
+        /** pop function **/
+        bool pop(T& item);
+        // pop with move
+        bool pop_move(T& item);
+
+        /** performance function **/
+        size_t capacity() const;
+        size_t size() const;
+        bool empty();
+        bool full();
+        void swap(ringbuff& other) noexcept;
+
+        /** swap_to function **/
+        void swap_to_list(std::list<T>& list_);
+        void swap_to_vector(std::vector<T>& vec_);
+        std::list<T> swap_to_list();
+        std::vector<T> swap_to_vector();
+
+    private:
+        bool is_powtwo(size_t n) const;
+        size_t next_powtwo(size_t n) const;
+        size_t adj_size(size_t size) const;
+
+    private:
+        // avoid pseudo shareing
+        std::atomic<size_t> head_ alignas(64);
+        std::atomic<size_t> tail_ alignas(64);
+        //        std::unique_ptr<T[]> buffer_;
+        size_t capacity_;
+        T* buffer_;
+    };
+
+}  // namespace moon
+```
+
+**Function Description:**
+
+- `ringbuff(size_t size = 1024)`: Constructor that initializes the ring buffer with a specified capacity, adjusting it to the nearest power of two for optimal performance. The default capacity is 1024.
+- `~ringbuff()`: Destructor that cleans up the allocated buffer.
+- `bool push(const T& item)`: Attempts to add an item to the buffer. Returns `true` if successful; otherwise, returns `false` if the buffer is full. This method copies the item into the buffer.
+- `bool push_move(T&& item)`: Similar to `push`, but uses move semantics to avoid copying the item. Returns `true` if successful; `false` if the buffer is full.
+- `bool pop(T& item)`: Attempts to remove an item from the buffer and copy it into the provided variable. Returns `true` if successful; otherwise, `false` if the buffer is empty.
+- `bool pop_move(T& item)`: Similar to `pop`, but uses move semantics to move the item out of the buffer. Returns `true` if successful; otherwise, `false` if the buffer is empty.
+- `size_t capacity() const`: Returns the current capacity of the buffer.
+- `size_t size() const`: Returns the number of items currently in the buffer.**This operation requires additional atomic operations, resulting in performance loss. Please use with caution**
+- `bool empty() const`: Checks if the buffer is empty.
+- `bool full() const`: Checks if the buffer is full.
+- `void swap(ringbuff& other) noexcept`: Exchanges the contents of this buffer with another `ringbuff` instance, including their internal state without copying elements.
+- `void swap_to_list(std::list<T>& list_)`: Moves all elements from the buffer to a `std::list`, clearing the buffer.
+- `void swap_to_vector(std::vector<T>& vec_)`: Moves all elements from the buffer to a `std::vector`, clearing the buffer.
+- `std::list<T> swap_to_list()`: Moves all elements from the buffer to a new `std::list`, returning it.
+- `std::vector<T> swap_to_vector()`: Moves all elements from the buffer to a new `std::vector`, returning it.
+
+---
+
+### `lfthread`
+
+**Description:**
+
+`lfthread` is a lightweight, lock-free thread management class designed for high concurrency and low latency applications. It utilizes a ring buffer (`ringbuff`) to queue tasks which are functions encapsulated in `std::function<void()>`. The class handles task execution in its own thread and provides mechanisms for task enqueueing, thread shutdown, and buffer swapping.
+
+**Interface:**
+
+```cpp
+namespace moon {
+
+    class lfthread {
+    public:
+        using task = std::function<void()>;
+        lfthread(size_t size)
+            : buffer_(size),
+              shutdown_(false),
+              t_(std::thread(&lfthread::t_task, this)) {}
+        ~lfthread() { t_shutdown(); }
+        bool enqueue_task(task _task);
+        bool enqueue_task_move(task&& _task);
+        void t_shutdown();
+        int getload() const;
+        void swap_to_ringbuff(ringbuff<task>& rb_);
+        void swap_to_list(std::list<task>& list_);
+        void swap_to_vector(std::vector<task>& vec_);
+        std::list<task> swap_to_list();
+        std::vector<task> swap_to_vector();
+
+        /** move copy **/
+        lfthread& operator=(lfthread&& other) noexcept;
+        lfthread(lfthread&& other) noexcept;
+
+    private:
+        void t_task();
+
+    private:
+        ringbuff<task> buffer_;  // Task Queue(lock-free Ring-Buffer)
+        bool shutdown_; 
+        std::thread t_;
+    };
+
+}  // namespace moon
+
+```
+
+**Function Description:**
+
+- `lfthread(size_t size)`: Constructs the thread with a specified size for the task buffer.
+- `~lfthread()`: Destroys the thread, ensuring it is properly shut down.
+- `bool enqueue_task(task _task)`: Attempts to enqueue a new task into the buffer. Returns `true` if successful; `false` if the buffer is full.
+- `bool enqueue_task_move(task&& _task)`: Similar to `enqueue_task`, but uses move semantics to optimize performance.
+- `void t_shutdown()`: Shuts down the thread, ensuring all tasks are completed and the thread is joinable before exiting.
+- `int getload() const`: Returns the number of tasks currently in the buffer.
+- `void swap_to_ringbuff(ringbuff<task>& rb_)`: Swaps the internal task buffer with another ring buffer.
+- `void swap_to_list(std::list<task>& list_)`: Transfers all tasks from the buffer to a specified std::list.
+- `void swap_to_vector(std::vector<task>& vec_)`: Transfers all tasks from the buffer to a specified std::vector.
+- `std::list<task> swap_to_list()`: Returns a std::list containing all tasks from the buffer.
+- `std::vector<task> swap_to_vector()`: Returns a std::vector containing all tasks from the buffer.
+- `lfthread& operator=(lfthread&& other) noexcept`: Move assignment operator.
+- `lfthread(lfthread&& other) noexcept`: Move constructor.
+
+---
+
+### `lfthreadpool`
+
+**Description:**
+
+`lfthreadpool` is a versatile thread pool management class designed to handle dynamic or static allocation of threads for executing tasks. It leverages `lfthread` instances for managing individual threads and tasks, allowing for efficient task distribution and execution in a multi-threaded environment. The pool can operate in either a static mode, where the number of threads is fixed, or a dynamic mode, where threads can be adjusted based on workload.
+
+**Interface:**
+
+```cpp
+#define ADJUST_TIMEOUT_SEC 5
+
+namespace moon {
+
+    class lfthread;
+
+    enum class PoolMode {
+        Static,  // 静态模式
+        Dynamic  // 动态模式
+    };
+
+    class lfthreadpool {
+    public:
+        lfthreadpool(int tnum = -1, size_t buffsize = 1024,
+                     PoolMode mode = PoolMode::Static);
+        ~lfthreadpool();
+        void init();
+        void t_shutdown();
+
+        /** add_task function **/
+        template <typename _Fn, typename... _Args>
+        bool add_task(_Fn&& fn, _Args&&... args);
+
+        template <typename _Fn, typename... _Args>
+        bool add_task_move(_Fn&& fn, _Args&&... args);
+
+        lfthreadpool(const lfthreadpool&) = delete;
+        lfthreadpool& operator=(const lfthreadpool&) = delete;
+
+    private:
+        const size_t getnext();
+        void adjust_task();
+        void del_thread_dispath();
+        void add_thread();
+        const size_t getminidx();
+        const size_t getmaxidx();
+        const int getload();
+        void setnum();
+        void setnum(size_t n);
+        int getcores() const;
+
+    private:
+        std::atomic<size_t> tnum_;
+        // size_t tnum_;
+        std::thread mentor_;
+        std::vector<lfthread*> workers_;
+        // bool shutdown_;
+        std::atomic<bool> shutdown_;
+        PoolMode mode_;
+        size_t buffsize_;
+        size_t next_ = 0;
+        int timesec_ = 5;
+        int coolsec_ = 30;
+        int load_max = 80;
+        int load_min = 20;
+        int max_tnum = 0;
+        int min_tnum = 0;
+    };
+
+}  // namespace moon
+```
+
+**Function Description:**
+
+- **`lfthreadpool(int tnum, size_t buffsize, PoolMode mode)`**: Constructs the thread pool with a specific number of threads, buffer size per thread, and operating mode.
+- **`~lfthreadpool()`**: Destroys the thread pool, ensuring all threads are properly shut down.
+- **`void init()`**: Initializes the thread pool, creating the specified number of threads.
+- **`void t_shutdown()`**: Shuts down all threads in the pool safely.
+- **`bool add_task(_Fn&& fn, _Args&&... args)`**: Adds a new task to the pool; tasks are distributed to threads based on current load and pool mode.
+- **`bool add_task_move(_Fn&& fn, _Args&&... args)`**: Similar to `add_task`, but uses move semantics to optimize the handling of tasks that are movable.
+- **`void adjust_task()`**: Dynamically adjusts the number of threads based on the current load and predefined thresholds if the pool is in dynamic mode.
+- **`void del_thread_dispath()`**: Removes a thread from the pool when it is no longer needed and redistributes its tasks among remaining threads.
+- **`void add_thread()`**: Adds a new thread to the pool to handle increased load.
+- **`int getload()`**: Calculates the total load across all threads as a percentage of their capacity.
+
+---
+
 ## Usage Examples
 
 The following examples demonstrate how to use the MoonNet network library to build TCP and UDP servers, as well as how to use timer and signal handling functionalities.
@@ -1677,6 +1918,91 @@ int main() {
    ```
 
    Starts the server, begins the event loop, and the signal handling starts working.
+
+---
+
+### `ringbuff` Usage Example
+
+**Code Example**:
+
+```cpp
+#include <moonnet/moonnet.h> // You can only reference the general header file
+//#include <moonnet/ringbuff.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    moon::ringbuff<std::string> buffer(32); // Initialize a ring buffer with capacity adjusted to the nearest power of two
+
+    // Push elements into the ring buffer using push and push_move
+    buffer.push("Hello");
+    buffer.push_move(std::string("World"));
+
+    // Pop elements from the ring buffer
+    std::string data;
+    if (buffer.pop(data)) {
+        std::cout << "Popped: " << data << std::endl;
+    }
+
+    // Check buffer size and capacity
+    std::cout << "Current buffer size: " << buffer.size() << std::endl;
+    std::cout << "Buffer capacity: " << buffer.capacity() << std::endl;
+
+    // Check if the buffer is empty or full
+    std::cout << "Is the buffer empty? " << (buffer.empty() ? "Yes" : "No") << std::endl;
+    std::cout << "Is the buffer full? " << (buffer.full() ? "Yes" : "No") << std::endl;
+
+    // Use swap_to_vector to export the buffer's contents
+    std::vector<std::string> vec;
+    buffer.swap_to_vector(vec);
+
+    // Display exported data
+    for (auto &str : vec) {
+        std::cout << "Exported: " << str << std::endl;
+    }
+
+    return 0;
+}
+```
+
+------
+
+### `lfthreadpool` Usage Example
+
+**Code Example**:
+
+```cpp
+#include <moonnet/moonnet.h> // You can only reference the general header file
+//#include <moonnet/lfthreadpool.h>
+#include <iostream>
+#include <functional>
+
+void printTask(int num) {
+    std::cout << "Task " << num << " completed." << std::endl;
+}
+
+int main() {
+    // If tnum is -1, it means that the system will automatically set the size of the thread pool
+//    moon::lfthreadpool pool(4, 1024, moon::PoolMode::Dynamic); // Initialize the thread pool in dynamic mode
+    // Use system settings for pool size and static mode
+    moon::lfthreadpool pool(-1, 32);
+
+    // Add tasks to the pool using add_task and add_task_move
+    for (int i = 0; i < 10; i++) {
+        pool.add_task(printTask, i);
+        pool.add_task_move([=] { printTask(i + 10); });
+    }
+
+    // Allow some time for tasks to execute
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Shutdown the pool
+    pool.t_shutdown();
+
+    return 0;
+}
+```
 
 ---
 

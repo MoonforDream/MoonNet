@@ -25,53 +25,61 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Author: MoonforDream
 
 */
-
 
 #include "threadpool.h"
 #include <chrono>
 #include <mutex>
 #include <unistd.h>
 
-
 using namespace moon;
 
-void threadpool::init(){
-    run_num=0;
-    live_num=0;
-    exit_num=0;
-    max_thr_num=std::thread::hardware_concurrency()+1;
-    adjust_thr=std::thread([this]{
-        this->adjust_task();
-    });
-    for(int i=0;i<min_thr_num;++i){
-        threads.emplace_back([this]{
-            this->t_task();
-        });
+/**
+ * @brief Initializes the thread pool.
+ *
+ * This function sets the initial state of the thread pool, including the number
+ * of running threads, live threads, and threads scheduled to exit. It
+ * determines the maximum number of threads based on the hardware concurrency,
+ * starts the adjustment thread, and initializes the minimum number of worker
+ * threads.
+ */
+void threadpool::init() {
+    run_num = 0;
+    live_num = 0;
+    exit_num = 0;
+    max_thr_num = std::thread::hardware_concurrency() + 1;
+    adjust_thr = std::thread([this] { this->adjust_task(); });
+    for (int i = 0; i < min_thr_num; ++i) {
+        threads.emplace_back([this] { this->t_task(); });
     }
 }
 
-
-
-
-void threadpool::t_task(){
+/**
+ * @brief Worker thread task function.
+ *
+ * This function defines the main loop for each worker thread in the thread
+ * pool. It continuously waits for tasks to be available, executes them, and
+ * handles thread shutdown requests. The function ensures thread-safe access to
+ * the task queue and manages the thread's running and live counts.
+ */
+void threadpool::t_task() {
     while (1) {
         std::unique_lock<std::mutex> lock(mx);
-        task_cv.wait(lock,[this]{
-            return !tasks.empty()||shutdown||exit_num>0;
+        task_cv.wait(lock, [this] {
+            return !tasks.empty() || shutdown || exit_num > 0;
         });
-        if(exit_num>0){
+        if (exit_num > 0) {
             exit_num--;
             return;
         }
-        if(shutdown&&tasks.empty()){
+        if (shutdown && tasks.empty()) {
             return;
         }
-        auto task=tasks.front();
+        auto task = tasks.front();
         tasks.pop();
         lock.unlock();
         ++run_num;
@@ -81,41 +89,54 @@ void threadpool::t_task(){
     }
 }
 
-
-void threadpool::t_shutdown(){
+/**
+ * @brief Shuts down the thread pool.
+ *
+ * This function initiates the shutdown process for the thread pool. It sets the
+ * shutdown flag, detaches the adjustment thread, notifies all worker threads to
+ * terminate, and joins all worker threads to ensure a clean shutdown.
+ */
+void threadpool::t_shutdown() {
     {
         std::unique_lock<std::mutex> lock(mx);
-        shutdown=true;
+        shutdown = true;
     }
     adjust_thr.detach();
     task_cv.notify_all();
-    for(auto& t:threads){
-        if(t.joinable()) t.join();
+    for (auto& t : threads) {
+        if (t.joinable()) t.join();
     }
 }
 
-
-
-void threadpool::adjust_task(){
+/**
+ * @brief Adjusts the number of worker threads based on the workload.
+ *
+ * This function runs in a separate adjustment thread and periodically checks
+ * the workload to determine if more threads need to be added or existing
+ * threads should be terminated. It ensures that the number of live threads
+ * stays within the defined minimum and maximum thread limits, adding up to 10
+ * new threads or removing up to 10 threads as needed.
+ */
+void threadpool::adjust_task() {
     while (!shutdown) {
         std::this_thread::sleep_for(std::chrono::seconds(DEFAULT_TIME));
         {
-            int size=threads.size();
-            if (tasks.size() > live_num && live_num < max_thr_num&&size<max_thr_num) {
+            int size = threads.size();
+            if (tasks.size() > live_num && live_num < max_thr_num &&
+                size < max_thr_num) {
                 int add = 0;
                 std::unique_lock<std::mutex> lock(mx);
                 for (int i = size; i < max_thr_num && add < 10; ++i) {
-                    threads.emplace_back([this] {
-                        this->t_task();
-                    });
+                    threads.emplace_back([this] { this->t_task(); });
                     add++;
                     live_num++;
                 }
                 lock.unlock();
             }
             if (run_num * 2 < live_num && live_num > min_thr_num) {
-                exit_num=live_num-min_thr_num>=10?10:live_num-min_thr_num;
-                int x=exit_num;
+                exit_num =
+                    live_num - min_thr_num >= 10 ? 10 : live_num - min_thr_num;
+                int x = exit_num;
                 std::unique_lock<std::mutex> lock(mx);
                 for (int i = 0; i < x; ++i) {
                     task_cv.notify_one();
@@ -126,5 +147,3 @@ void threadpool::adjust_task(){
         }
     }
 }
-
-
