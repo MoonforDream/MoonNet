@@ -15,7 +15,8 @@
     '---'                                               '---'           `----'
 ```
 
-[![Build Status](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml/badge.svg)](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml)&nbsp;
+[![CI](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml/badge.svg)](https://github.com/MoonforDream/MoonNet/actions/workflows/ci.yml)&nbsp;
+[![Build status](https://ci.appveyor.com/api/projects/status/avhe4qqm90hg2gjw/branch/master?svg=true)](https://ci.appveyor.com/project/MoonforDream/moonnet/branch/master)&nbsp;
 [![Release](https://img.shields.io/github/release/MoonforDream/MoonNet.svg)](https://github.com/MoonforDream/MoonNet/releases/latest)
 
 
