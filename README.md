@@ -370,9 +370,9 @@ int main() {
 
 <a name="guide"></a>
 
-​	请参考 [MoonNet 使用手册](https://moonfordream.github.io/posts/MoonNet%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/) 获取更详细的使用说明。
+​	请参考 [MoonNet 使用手册](https://moonfordream.github.io/posts/MoonNet%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/) 或者 [Wiki](https://github.com/MoonforDream/MoonNet/wiki/MoonNet-Guide-(cn)) 获取更详细的使用说明。
 
-​	Please refer to the [MoonNet Guide](https://moonfordream.github.io/posts/MoonNet-guide-en/) for more detailed instructions
+​	Please refer to the [MoonNet Guide](https://moonfordream.github.io/posts/MoonNet-guide-en/) or [Wiki](https://github.com/MoonforDream/MoonNet/wiki/MoonNet-Guide-(en)) for more detailed instructions
 
 
 
